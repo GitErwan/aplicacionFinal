@@ -1,31 +1,41 @@
 // Requires
 var express = require('express');
 var mongoose = require('mongoose');
-
+var bodyParser = require('body-parser');
 
 // Inicializar variables
 var app = express();
 
+ /**
+  * Body Parser
+  */
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
 
-// Importar rutas
+/**
+ * Importar rutas
+ */
 var appRoutes = require('./routes/app');
-var usuarioRoutes = require('./routes/usuario');
+var pacienteRoutes = require('./routes/paciente');
 
 
 // Conexión a la base de datos
-mongoose.connection.openUri('mongodb://localhost:27017/proyectoFinalDB', (err, res) => {
+mongoose.connection.openUri('mongodb://localhost:27017/proyectoHospitalDB', (err, res) => {
     if (err) throw err;
 
-    console.log(res);
+    console.log("base de datos creada!");
 })
 
 
 // Rutas
-app.use('/usuario', usuarioRoutes);
+app.use('/paciente', pacienteRoutes);
 app.use('/', appRoutes);
 
 
 // Escuchar peticiones
-app.listen(3001, () => {
-    console.log("Express funcionando en el puerto 3000");
+var port = 3001;
+app.listen(port, () => {
+    console.log("Express funcionando en el puerto "+port);
 });
