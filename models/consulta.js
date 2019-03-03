@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+var uniqueValidator = require('mongoose-unique-validator');
+pacienteSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
 
 var Schema = mongoose.Schema;
 
