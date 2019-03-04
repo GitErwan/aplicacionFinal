@@ -14,5 +14,5 @@ var medicoSchema = new Schema({
     especialidad: { type: String, required: [true, 'La especialidad es obligatoria'] }, 
 });
 
-pacienteSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
+medicoSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
 module.exports = mongoose.model('medico', medicoSchema);

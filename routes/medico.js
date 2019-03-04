@@ -2,15 +2,15 @@ var express = require('express');
 var bcrypt = require('bcryptjs');
 var app = express();
 
-var Paciente = require('../models/paciente');
+var Medico = require('../models/medico');
 
 /**
- * GET PACIENTES
+ * GET MEDICOS
  */
 app.get('/', (req, res, next) => {
-    Paciente.find({ }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual') // con esto indico que el get devuelva todos los datos menos la contraseña
+    Medico.find({ }, 'nombre apellido usuario email telefono baja especialidad') // con esto indico que el get devuelva todos los datos menos la contraseña
         .exec(
-            (err, pacientes) => {
+            (err, medicos) => {
             if (err){
                 return res.status(500).json({
                     ok: false,
@@ -21,29 +21,28 @@ app.get('/', (req, res, next) => {
 
         res.status(200).json({
             ok: true,
-            pacientes
+            medicos
         });
     });
 });
 
 /**
- * POST PACIENTES
+ * POST MEDICOS
  */
 app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
     var body = req.body;
-    var paciente = new Paciente({
+    var medico = new Medico({
         nombre: body.nombre,
         apellido: body.apellido,
+        usuario: body.usuario,
         password: bcrypt.hashSync(body.password, 10), 
-        dni: body.dni,
         email: body.email,
         telefono: body.telefono,
-        direccion: body.direccion,
-        tarjeta_sanitaria: body.tarjeta_sanitaria,
-        situacion_actual: body.situacion_actual
+        baja: false,
+        especialidad: body.especialidad,
     });
 
-    paciente.save( ( err, pacienteGuardado ) => {
+    medico.save( ( err, medicoGuardado ) => {
         if (err){
             return res.status(400).json({
                 ok: false,
@@ -53,19 +52,19 @@ app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la 
         }
         res.status(201).json({ 
             ok: true,
-            paciente: pacienteGuardado
+            medico: medicoGuardado
         });
     });
 });
 
 /**
- * PUT PACIENTES
+ * PUT MEDICOS
  */
 app.put('/:id', (req, res) =>{
     var id = req.params.id;
     var body = req.body;
 
-    Paciente.findById(id, (err, paciente)=>{
+    Medico.findById(id, (err, medico)=>{
         if (err){
             return res.status(500).json({
                 ok: false,
@@ -74,7 +73,7 @@ app.put('/:id', (req, res) =>{
             });
         }
 
-        if (!paciente){
+        if (!medico){
             if (err){
                 return res.status(400).json({
                     ok: false,
@@ -85,22 +84,22 @@ app.put('/:id', (req, res) =>{
         }
 
         if(body.password==""){ // Si se envía vacía significa que no se quiere cambiar la contraseña, y si no se cifra
-            var pass = paciente.password;
+            var pass = medico.password;
         }else{
             var pass = bcrypt.hashSync(body.password, 10)
         }
                
-        if(paciente.nombre != body.nombre) paciente.nombre = body.nombre
-        if(paciente.apellido != body.apellido) paciente.apellido = body.apellido
-        paciente.password = pass 
-        if(paciente.dni != body.dni) paciente.dni = body.dni
-        if(paciente.email != body.email) paciente.email = body.email
-        if(paciente.telefono != body.telefono) paciente.telefono = body.telefono
-        if(paciente.direccion != body.direccion) paciente.direccion = body.direccion
-        if(paciente.tarjeta_sanitaria != body.tarjeta_sanitaria) paciente.tarjeta_sanitaria = body.tarjeta_sanitaria
-        if(paciente.situacion_actual != body.situacion_actual) paciente.situacion_actual = body.situacion_actual
+        if(medico.nombre != body.nombre) medico.nombre = body.nombre
+        if(medico.apellido != body.apellido) medico.apellido = body.apellido
+        medico.password = pass 
+        if(medico.dni != body.dni) medico.dni = body.dni
+        if(medico.email != body.email) medico.email = body.email
+        if(medico.telefono != body.telefono) medico.telefono = body.telefono
+        if(medico.direccion != body.direccion) medico.direccion = body.direccion
+        if(medico.tarjeta_sanitaria != body.tarjeta_sanitaria) medico.tarjeta_sanitaria = body.tarjeta_sanitaria
+        if(medico.situacion_actual != body.situacion_actual) medico.situacion_actual = body.situacion_actual
         
-        paciente.save( ( err, pacienteGuardado ) => {
+        medico.save( ( err, medicoGuardado ) => {
             if (err){
                 return res.status(400).json({
                     ok: false,
@@ -109,11 +108,11 @@ app.put('/:id', (req, res) =>{
                 }); 
             }
 
-            pacienteGuardado.password = 'Me gusta la pizza con piña'; // Esto oculta la contraseña al reenviar los datos en la respuesta
+            medicoGuardado.password = 'Me gusta la pizza con piña'; // Esto oculta la contraseña al reenviar los datos en la respuesta
 
             res.status(200).json({ 
                 ok: true,
-                paciente: pacienteGuardado
+                medico: medicoGuardado
             });
         }); 
     });
@@ -126,7 +125,7 @@ app.put('/:id', (req, res) =>{
  app.delete('/:id', (req, res)=>{
     var id = req.params.id;
 
-    Paciente.findByIdAndRemove(id, (err, usuarioBorrado)=>{
+    Medico.findByIdAndRemove(id, (err, medicoBorrado)=>{
         if (err){
             return res.status(500).json({
                 ok: false,
@@ -135,7 +134,7 @@ app.put('/:id', (req, res) =>{
             }); 
         }
 
-        if (!usuarioBorrado){
+        if (!medicoBorrado){
             return res.status(400).json({
                 ok: false,
                 mensaje: 'No existe ese usuario con ese id',
@@ -144,7 +143,7 @@ app.put('/:id', (req, res) =>{
 
         res.status(200).json({ 
             ok: true,
-            paciente: usuarioBorrado
+            medico: medicoBorrado
         });
     });
  });
