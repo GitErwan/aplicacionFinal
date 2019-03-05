@@ -120,13 +120,13 @@ app.put('/:id', (req, res) =>{
 });
 
 /**
- * Borrar usuario
+ * BORRAR PACIENTES
  */
 
  app.delete('/:id', (req, res)=>{
     var id = req.params.id;
 
-    Paciente.findByIdAndRemove(id, (err, usuarioBorrado)=>{
+    Paciente.findByIdAndRemove(id, (err, pacienteBorrado)=>{
         if (err){
             return res.status(500).json({
                 ok: false,
@@ -135,7 +135,7 @@ app.put('/:id', (req, res) =>{
             }); 
         }
 
-        if (!usuarioBorrado){
+        if (!pacienteBorrado){
             return res.status(400).json({
                 ok: false,
                 mensaje: 'No existe ese usuario con ese id',
@@ -144,7 +144,7 @@ app.put('/:id', (req, res) =>{
 
         res.status(200).json({ 
             ok: true,
-            paciente: usuarioBorrado
+            paciente: pacienteBorrado
         });
     });
  });

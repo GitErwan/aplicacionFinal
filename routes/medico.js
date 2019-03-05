@@ -92,12 +92,11 @@ app.put('/:id', (req, res) =>{
         if(medico.nombre != body.nombre) medico.nombre = body.nombre
         if(medico.apellido != body.apellido) medico.apellido = body.apellido
         medico.password = pass 
-        if(medico.dni != body.dni) medico.dni = body.dni
+        if(medico.usuario != body.usuario) medico.usuario = body.usuario
         if(medico.email != body.email) medico.email = body.email
         if(medico.telefono != body.telefono) medico.telefono = body.telefono
-        if(medico.direccion != body.direccion) medico.direccion = body.direccion
-        if(medico.tarjeta_sanitaria != body.tarjeta_sanitaria) medico.tarjeta_sanitaria = body.tarjeta_sanitaria
-        if(medico.situacion_actual != body.situacion_actual) medico.situacion_actual = body.situacion_actual
+        if(medico.baja != body.baja) medico.baja = body.baja
+        if(medico.especialidad != body.especialidad) medico.especialidad = body.especialidad
         
         medico.save( ( err, medicoGuardado ) => {
             if (err){
@@ -119,7 +118,7 @@ app.put('/:id', (req, res) =>{
 });
 
 /**
- * Borrar usuario
+ * BOBRRAR MEDICO
  */
 
  app.delete('/:id', (req, res)=>{

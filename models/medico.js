@@ -1,5 +1,11 @@
 var mongoose = require('mongoose');
 var uniqueValidator = require('mongoose-unique-validator');
+var especialidad = require('./especialidades');
+
+var especialidades = { //esto sirve para fijar unas especialidades y añadir seguridad
+    values: especialidad,
+    message: '{value} no es una especialidad váida'
+};
 
 var Schema = mongoose.Schema;
 
@@ -11,7 +17,7 @@ var medicoSchema = new Schema({
     email: { type: String, required: [true, 'El email es obligatorio'] }, 
     telefono: { type: String, required: [true, 'El telefono es obligatorio'] }, 
     baja: { type: Boolean }, 
-    especialidad: { type: String, required: [true, 'La especialidad es obligatoria'] }, 
+    especialidad: { type: String, required: [true, 'La especialidad es obligatoria'], enum: especialidades }, 
 });
 
 medicoSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
