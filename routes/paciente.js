@@ -27,6 +27,32 @@ app.get('/', (req, res, next) => {
 });
 
 /**
+ * MOSTRAR UN PACIENTE
+ */
+/**
+ * GET PACIENTES (con un id)
+ */
+app.get('/:id', (req, res, next) => {
+    var id = req.params.id;
+    Paciente.find({ _id:id }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual') // con esto indico que el get devuelva todos los datos menos la contraseña
+        .exec(
+            (err, pacientes) => {
+            if (err){
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error de base de datos',
+                    errors: err
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            pacientes
+        });
+    });
+});
+
+/**
  * POST PACIENTES
  */
 app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body

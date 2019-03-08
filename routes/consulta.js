@@ -8,6 +8,8 @@ var Consulta = require('../models/consulta');
  */
 app.get('/', (req, res, next) => {
     Consulta.find({ })
+        .populate('id_medico', 'nombre apellido usuario email telefono baja especialidad')
+        .populate('id_paciente', 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual')
         .exec(
             (err, consultas) => {
             if (err){
@@ -37,7 +39,8 @@ app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la 
         hora: body.hora, 
         descripcion_paciente: body.descripcion_paciente,
         diagnostico_medico: body.diagnostico_medico,
-        especialidad:  body.especialidad
+        especialidad:  body.especialidad,
+        estado: body.estado
     });
 
     consulta.save( ( err, consultaGuardado ) => {
