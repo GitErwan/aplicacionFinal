@@ -1,11 +1,13 @@
 var express = require('express');
 var bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
+var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var app = express();
 
 var Paciente = require('../models/paciente');
 
 /**
- * GET PACIENTES
+ * GET PACIENTES 
  */
 app.get('/', (req, res, next) => {
     Paciente.find({ }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual') // con esto indico que el get devuelva todos los datos menos la contraseña
@@ -26,11 +28,9 @@ app.get('/', (req, res, next) => {
     });
 });
 
+
 /**
- * MOSTRAR UN PACIENTE
- */
-/**
- * GET PACIENTES (con un id)
+ * GET UN PACIENTE (con un id)
  */
 app.get('/:id', (req, res, next) => {
     var id = req.params.id;
@@ -55,7 +55,7 @@ app.get('/:id', (req, res, next) => {
 /**
  * POST PACIENTES
  */
-app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
+app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
     var body = req.body;
     var paciente = new Paciente({
         nombre: body.nombre,
@@ -79,7 +79,9 @@ app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la 
         }
         res.status(201).json({ 
             ok: true,
-            paciente: pacienteGuardado
+            paciente: pacienteGuardado,
+            //pacientetoken: req.paciente,
+            //medicotoken: req.medico,
         });
     });
 });
@@ -173,6 +175,11 @@ app.put('/:id', (req, res) =>{
             paciente: pacienteBorrado
         });
     });
+
+
+
+
+
  });
 
 module.exports = app;
