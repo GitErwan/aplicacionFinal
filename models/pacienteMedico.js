@@ -8,4 +8,4 @@ var pacienteMedicoSchema = new Schema({
     descripionActual: { type: String },
 });
 
-module.exports = mongoose.model('paciente-Medico', pacienteMedicoSchema);
+module.exports = mongoose.model('pacienteMedico', pacienteMedicoSchema);

@@ -5,6 +5,8 @@ var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta v
 var app = express();
 
 var Paciente = require('../models/paciente');
+var Medico = require('../models/medico');
+var pacienteMedico = require('../models/pacienteMedico');
 
 /**
  * GET PACIENTES 
@@ -77,6 +79,7 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
                 errors: err
             });
         }
+        asignarMedicos(pacienteGuardado._id);
         res.status(201).json({ 
             ok: true,
             paciente: pacienteGuardado,
@@ -85,6 +88,54 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
         });
     });
 });
+
+function asignarMedicos(idUsuario){
+    var medicoFinal="a";    
+    var medicoCount=0;
+    var x =["Dentista"];
+    for(i=0;i<x.length;i++){ // Busca todos los médicos de esa especialidad
+        Medico.find({ especialidad: x[i] }, 'nombre apellido usuario email telefono baja especialidad') // con esto indico que el get devuelva todos los datos menos la contraseña
+            .exec((err, medicos) => {
+                if (err){
+                    return res.status(500).json({
+                        ok: false,
+                        mensaje: 'Error de base de datos',
+                        errors: err
+                    });
+                }
+
+                medicos.forEach(function(medico){ // Busca la cantidad de pacientes por médico                    
+                    var x = pacienteMedico.count({ id_medico: medico._id }) // con esto indico que el get devuelva todos los datos menos la contraseña
+                    .exec(
+                        (err, countMedicoPaciente) => {
+                        if (err){
+                            return res.status(500).json({
+                                ok: false,
+                                mensaje: 'Error de base de datos',
+                                errors: err
+                            });
+                        }   
+                        
+                        if(countMedicoPaciente<=medicoCount){ // Coge el id del médico con menos pacientes                           
+                            medicoFinal = medico._id;                            
+                            medicoCount = countMedicoPaciente;
+                        }
+                        return medicoFinal;
+                    });
+                    console.log(x); 
+                });                            
+        });   
+        console.log(medicoFinal); 
+        // Aquí guardo el médico asignado automáticamente en la tabla de relaciones            
+        /*var pacientemedico = new pacienteMedico({
+            id_medico: medicoFinal,
+            id_usuario: idUsuario,            
+        });
+
+    
+        pacientemedico.save();*/
+    }
+}
 
 /**
  * PUT PACIENTES
