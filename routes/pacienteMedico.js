@@ -8,6 +8,8 @@ var pacienteMedico = require('../models/pacienteMedico');
  */
 app.get('/', (req, res, next) => {
     pacienteMedico.find({ }) // con esto indico que el get devuelva todos los datos menos la contraseña
+        .populate('id_medico', 'nombre apellido usuario email telefono baja especialidad')
+        .populate('id_paciente', 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual')
         .exec(
             (err, pacienteMedicos) => {
             if (err){

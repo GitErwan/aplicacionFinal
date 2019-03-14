@@ -79,7 +79,10 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
                 errors: err
             });
         }
-        asignarMedicos(pacienteGuardado._id);
+        prueba(pacienteGuardado._id);
+
+
+
         res.status(201).json({ 
             ok: true,
             paciente: pacienteGuardado,
@@ -88,6 +91,38 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
         });
     });
 });
+
+function prueba(idPaciente){
+    var x =["Dentista"];
+    for(i=0;i<x.length;i++){ 
+        Medico.find({ especialidad: x[i] }, 'nombre apellido dni usuario password especialidad email telefono direccion tarjeta_sanitaria situacion_actual npacientesasignados') // con esto indico que el get devuelva todos los datos menos la contraseña
+        .sort('npacientesasignados').exec(
+            (err, medicos) => {
+            if (err){
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error de base de datos',
+                    errors: err
+            });
+        }
+
+        // creo la consulta de relación con el médico asignado
+        var pacientemedico = new pacienteMedico({
+            id_medico: medicos[0],
+            id_paciente: idPaciente,            
+        });
+        pacientemedico.save();
+
+        // Sumo al médico +1 en los pacientes asignados
+        Medico.findById(medicos[0]._id, (err, medico)=>{
+            medico.npacientesasignados = medicos[0].npacientesasignados+1            
+            medico.save();
+        });
+        
+    });
+    }
+}
+
 
 function asignarMedicos(idUsuario){
     var medicoFinal="a";    
@@ -105,7 +140,7 @@ function asignarMedicos(idUsuario){
                 }
 
                 medicos.forEach(function(medico){ // Busca la cantidad de pacientes por médico                    
-                    var x = pacienteMedico.count({ id_medico: medico._id }) // con esto indico que el get devuelva todos los datos menos la contraseña
+                    pacienteMedico.count({ id_medico: medico._id }) // con esto indico que el get devuelva todos los datos menos la contraseña
                     .exec(
                         (err, countMedicoPaciente) => {
                         if (err){
@@ -120,11 +155,12 @@ function asignarMedicos(idUsuario){
                             medicoFinal = medico._id;                            
                             medicoCount = countMedicoPaciente;
                         }
-                        return medicoFinal;
+                        console.log(medicoFinal);
                     });
-                    console.log(x); 
-                });                            
-        });   
+                    
+                });      
+                console.log(medicoFinal);             
+        });  
         console.log(medicoFinal); 
         // Aquí guardo el médico asignado automáticamente en la tabla de relaciones            
         /*var pacientemedico = new pacienteMedico({

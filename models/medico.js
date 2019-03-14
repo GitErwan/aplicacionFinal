@@ -17,7 +17,8 @@ var medicoSchema = new Schema({
     email: { type: String, required: [true, 'El email es obligatorio'] }, 
     telefono: { type: String, required: [true, 'El telefono es obligatorio'] }, 
     baja: { type: Boolean }, 
-    especialidad: { type: String, required: [true, 'La especialidad es obligatoria'], enum: especialidades }, 
+    especialidad: { type: String, required: [true, 'La especialidad es obligatoria'], enum: especialidades },
+    npacientesasignados: { type: Number, required: [true, 'npacientesasignados obligatorio'], default: 0 }, 
 });
 
 medicoSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });

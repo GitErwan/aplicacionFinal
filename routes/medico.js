@@ -8,7 +8,7 @@ var Medico = require('../models/medico');
  * GET MEDICOS
  */
 app.get('/', (req, res, next) => {
-    Medico.find({ }, 'nombre apellido usuario email telefono baja especialidad') // con esto indico que el get devuelva todos los datos menos la contraseña
+    Medico.find({ }, 'nombre apellido usuario email telefono baja especialidad npacientesasignados') // con esto indico que el get devuelva todos los datos menos la contraseña
         .exec(
             (err, medicos) => {
             if (err){
