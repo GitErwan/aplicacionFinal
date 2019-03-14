@@ -4,7 +4,7 @@ var app = express();
 var pacienteMedico = require('../models/pacienteMedico');
 
 /**
- * GET MEDICOS
+ * GET PACIENTEMEDICO
  */
 app.get('/', (req, res, next) => {
     pacienteMedico.find({ }) // con esto indico que el get devuelva todos los datos menos la contraseña
@@ -28,7 +28,7 @@ app.get('/', (req, res, next) => {
 });
 
 /**
- * POST MEDICOS
+ * POST PACIENTEMEDICO
  */
 app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
     var body = req.body;
@@ -53,4 +53,69 @@ app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la 
     });
 });
 
+
+
+/**
+ * PUT PACIENTEMEDICO
+ */
+app.put('/:id', (req, res) =>{
+    var id = req.params.id;
+    var body = req.body;
+
+    pacienteMedico.findById(id, (err, pacientemedico)=>{
+        if (err){
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar el usuario',
+                errors: err
+            });
+        }
+
+        if (!pacientemedico){
+            if (err){
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Ese usuario no existe',
+                    errors: err
+                });
+            }
+        }
+        
+        pacientemedico.id_medico = body.id_medico
+        pacientemedico.id_paciente = body.id_paciente
+        pacientemedico.descripionActual = body.descripionActual
+        
+        pacientemedico.save( ( err, pacientemedicoGuardado ) => {
+            if (err){
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar el usuario',
+                    errors: err
+                }); 
+            }
+
+            res.status(200).json({ 
+                ok: true,
+                pacientemedico: pacientemedicoGuardado
+            });
+        }); 
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = app;
+
