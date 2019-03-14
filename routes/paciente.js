@@ -7,6 +7,7 @@ var app = express();
 var Paciente = require('../models/paciente');
 var Medico = require('../models/medico');
 var pacienteMedico = require('../models/pacienteMedico');
+var especialidad = require('../models/especialidades');
 
 /**
  * GET PACIENTES 
@@ -79,7 +80,7 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
                 errors: err
             });
         }
-        prueba(pacienteGuardado._id);
+        asignaMedicos(pacienteGuardado._id, especialidad);
 
 
 
@@ -92,10 +93,9 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
     });
 });
 
-function prueba(idPaciente){
-    var x =["Dentista"];
-    for(i=0;i<x.length;i++){ 
-        Medico.find({ especialidad: x[i] }, 'nombre apellido dni usuario password especialidad email telefono direccion tarjeta_sanitaria situacion_actual npacientesasignados') // con esto indico que el get devuelva todos los datos menos la contraseña
+function asignaMedicos(idPaciente, especialidad){
+    for(i=0;i<especialidad.length;i++){ 
+        Medico.find({ especialidad: especialidad[i] }, 'nombre apellido dni usuario password especialidad email telefono direccion tarjeta_sanitaria situacion_actual npacientesasignados') // con esto indico que el get devuelva todos los datos menos la contraseña
         .sort('npacientesasignados').exec(
             (err, medicos) => {
             if (err){
@@ -123,55 +123,6 @@ function prueba(idPaciente){
     }
 }
 
-
-function asignarMedicos(idUsuario){
-    var medicoFinal="a";    
-    var medicoCount=0;
-    var x =["Dentista"];
-    for(i=0;i<x.length;i++){ // Busca todos los médicos de esa especialidad
-        Medico.find({ especialidad: x[i] }, 'nombre apellido usuario email telefono baja especialidad') // con esto indico que el get devuelva todos los datos menos la contraseña
-            .exec((err, medicos) => {
-                if (err){
-                    return res.status(500).json({
-                        ok: false,
-                        mensaje: 'Error de base de datos',
-                        errors: err
-                    });
-                }
-
-                medicos.forEach(function(medico){ // Busca la cantidad de pacientes por médico                    
-                    pacienteMedico.count({ id_medico: medico._id }) // con esto indico que el get devuelva todos los datos menos la contraseña
-                    .exec(
-                        (err, countMedicoPaciente) => {
-                        if (err){
-                            return res.status(500).json({
-                                ok: false,
-                                mensaje: 'Error de base de datos',
-                                errors: err
-                            });
-                        }   
-                        
-                        if(countMedicoPaciente<=medicoCount){ // Coge el id del médico con menos pacientes                           
-                            medicoFinal = medico._id;                            
-                            medicoCount = countMedicoPaciente;
-                        }
-                        console.log(medicoFinal);
-                    });
-                    
-                });      
-                console.log(medicoFinal);             
-        });  
-        console.log(medicoFinal); 
-        // Aquí guardo el médico asignado automáticamente en la tabla de relaciones            
-        /*var pacientemedico = new pacienteMedico({
-            id_medico: medicoFinal,
-            id_usuario: idUsuario,            
-        });
-
-    
-        pacientemedico.save();*/
-    }
-}
 
 /**
  * PUT PACIENTES

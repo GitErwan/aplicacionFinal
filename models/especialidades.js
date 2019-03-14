@@ -1,6 +1,6 @@
 var especialidades = [
     "Médico de cabecera",
-     "Dentista"
+    "Dentista"
     ];
     
 module.exports = especialidades;
