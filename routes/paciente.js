@@ -106,19 +106,20 @@ function asignaMedicos(idPaciente, especialidad){
             });
         }
 
-        // creo la consulta de relación con el médico asignado
-        var pacientemedico = new pacienteMedico({
-            id_medico: medicos[0],
-            id_paciente: idPaciente,            
-        });
-        pacientemedico.save();
+        if(medicos[0]){ // Si existen médicos de esa especialidad se mete la relación
+            // creo la consulta de relación con el médico asignado
+            var pacientemedico = new pacienteMedico({
+                id_medico: medicos[0],
+                id_paciente: idPaciente,            
+            });
+            pacientemedico.save();
 
-        // Sumo al médico +1 en los pacientes asignados
-        Medico.findById(medicos[0]._id, (err, medico)=>{
-            medico.npacientesasignados = medicos[0].npacientesasignados+1            
-            medico.save();
-        });
-        
+            // Sumo al médico +1 en los pacientes asignados
+            Medico.findById(medicos[0]._id, (err, medico)=>{
+                medico.npacientesasignados = medicos[0].npacientesasignados+1            
+                medico.save();
+            });
+        }
     });
     }
 }
