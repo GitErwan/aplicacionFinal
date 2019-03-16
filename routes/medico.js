@@ -40,6 +40,7 @@ app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la 
         telefono: body.telefono,
         baja: false,
         especialidad: body.especialidad,
+        rol: body.rol,
     });
 
     medico.save( ( err, medicoGuardado ) => {

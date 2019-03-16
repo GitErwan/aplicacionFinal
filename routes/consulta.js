@@ -28,6 +28,90 @@ app.get('/', (req, res, next) => {
 });
 
 /**
+ * GET CONSULTAS PACIENTE
+ *  consulta por el id del paciente y el estado de la consulta, puede ver consultas pendientes, canceladas, terminadas...
+ */
+app.get('/paciente/:id/:estado', (req, res, next) => {
+    var id = req.params.id;
+    var estado = req.params.estado;
+
+    Consulta.find({ estado: estado, id_paciente: id })
+        .populate('id_medico', 'nombre apellido usuario email telefono baja especialidad')
+        .populate('id_paciente', 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual')
+        .exec(
+            (err, consultas) => {
+            if (err){
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error de base de datos',
+                    errors: err
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            consultas
+        });
+    });
+});
+
+/**
+ * GET CONSULTAS MEDICO
+ *  consulta por el id del médico, el estado de la consulta, y la especialidad. Puede ver consultas pendientes, canceladas, terminadas...
+ */
+app.get('/medico/:id/:especialidad/:estado', (req, res, next) => {
+    var id = req.params.id;
+    var estado = req.params.estado;
+    var especialidad = req.params.especialidad;
+
+    Consulta.find({ estado: estado, id_medico: id, especialidad: especialidad })
+        .populate('id_medico', 'nombre apellido usuario email telefono baja especialidad')
+        .populate('id_paciente', 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual')
+        .exec(
+            (err, consultas) => {
+            if (err){
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error de base de datos',
+                    errors: err
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            consultas
+        });
+    });
+});
+
+/**
+ * GET CONSULTAS ADMINISTRADOR
+ *  devuelve las consultas de todos los médicos y filtrado por estado
+ */
+app.get('/administrador/:estado', (req, res, next) => {
+    var estado = req.params.estado;
+
+    Consulta.find({ estado: estado })
+        .populate('id_medico', 'nombre apellido usuario email telefono baja especialidad')
+        .populate('id_paciente', 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual')
+        .exec(
+            (err, consultas) => {
+            if (err){
+                return res.status(500).json({
+                    ok: false,
+                    mensaje: 'Error de base de datos',
+                    errors: err
+            });
+        }
+
+        res.status(200).json({
+            ok: true,
+            consultas
+        });
+    });
+});
+
+/**
  * POST CONSULTAS
  */
 app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body

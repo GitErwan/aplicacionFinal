@@ -7,6 +7,11 @@ var especialidades = { //esto sirve para fijar unas especialidades y añadir seg
     message: '{value} no es una especialidad váida'
 };
 
+var rolMedico = { //esto sirve para fijar un rol y añadir seguridad
+    values: ["Médico", "Administrador"],
+    message: '{value} no es un rol válido'
+};
+
 var Schema = mongoose.Schema;
     
 var medicoSchema = new Schema({
@@ -19,6 +24,7 @@ var medicoSchema = new Schema({
     baja: { type: Boolean }, 
     especialidad: { type: String, required: [true, 'La especialidad es obligatoria'], enum: especialidades },
     npacientesasignados: { type: Number, required: [true, 'npacientesasignados obligatorio'], default: 0 }, 
+    rol: { type: String, required: [true, 'El rol es obligatorio'], enum: rolMedico },
 });
 
 medicoSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
