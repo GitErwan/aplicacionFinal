@@ -52,7 +52,7 @@ app.use('/', appRoutes);
 
 
 // Escuchar peticiones
-var port = 3002;
+var port = 3000;
 app.listen(port, () => {
     console.log("Express funcionando en el puerto "+port);
 });

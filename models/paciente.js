@@ -3,6 +3,8 @@ var uniqueValidator = require('mongoose-unique-validator');
 
 var Schema = mongoose.Schema;
 
+
+
 var pacienteSchema = new Schema({
     nombre: { type: String, required: [true, 'El nombre es obligatorio'] },
     apellido: { type: String, required: [true, 'El apellido es obligatorio'] },

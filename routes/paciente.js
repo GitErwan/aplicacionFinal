@@ -60,6 +60,7 @@ app.get('/:id', (req, res, next) => {
  */
 app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
     var body = req.body;
+    var tarjetaSanitaria = Math.floor(Math.random() * (99999999 - 10000000)) + 10000000; //devuelve un número de 8 digitos
     var paciente = new Paciente({
         nombre: body.nombre,
         apellido: body.apellido,
@@ -68,7 +69,7 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
         email: body.email,
         telefono: body.telefono,
         direccion: body.direccion,
-        tarjeta_sanitaria: body.tarjeta_sanitaria,
+        tarjeta_sanitaria: tarjetaSanitaria,
         situacion_actual: body.situacion_actual
     });
 
@@ -116,7 +117,7 @@ function asignaMedicos(idPaciente, especialidad){
 
             // Sumo al médico +1 en los pacientes asignados
             Medico.findById(medicos[0]._id, (err, medico)=>{
-                medico.npacientesasignados = medicos[0].npacientesasignados+1            
+                medico.npacientesasignados = medicos[0].npacientesasignados+1;          
                 medico.save();
             });
         }
