@@ -112,6 +112,45 @@ app.get('/administrador/:estado', (req, res, next) => {
 });
 
 /**
+ * GET HORAS DISPONIBLES DE CONSULTA DEL MÉDICO
+ */
+app.get('/horasdisponibles/:id', async (req, res, next) => {
+    var d = new Date();
+    var id = req.params.id;
+    var horas = new Array();
+
+    for(i=0; i<12; i++){
+        // Creo un array bidimensional
+        horas[i] = new Array();
+
+        // Meto un número del mes durante un año, ej: si es marzo, empieza por el 3
+        d.setMonth(d.getMonth()+1)
+        horas[i][0] = d.getMonth();
+    }
+    //Inicializo la fecha a primera hora que puede hacerse una consulta (esto igual se puede hacer de otra forma)
+    d.setMonth(d.getMonth()-12); 
+    d.setHours(7);
+    d.setMinutes(0);
+
+    for(h=7;h<13;h++){
+        for(m=0;m<60;m+10){
+            var hCita = h+":"+m;
+            horas[0].push(hCita);
+        }
+    }
+
+    let consultasMedico = await Consulta.find({ id_medico: id });
+        
+    console.log(horas[0][0]);
+
+
+    // NOTA: el primer día tiene que ser desde la hora local del pc, no desde las 7 de la mañana
+});
+
+
+
+
+/**
  * POST CONSULTAS
  */
 app.post('/', (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body

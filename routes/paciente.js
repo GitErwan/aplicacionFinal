@@ -58,7 +58,7 @@ app.get('/:id', (req, res, next) => {
 /**
  * POST PACIENTES
  */
-app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
+app.post('/', /*mdAutenticacion.verificaToken, async*/ (req, res)=>{ // recibo todos los datos del post que vienen en la bariable body
     var body = req.body;
     var tarjetaSanitaria = Math.floor(Math.random() * (99999999 - 10000000)) + 10000000; //devuelve un número de 8 digitos
     var paciente = new Paciente({
@@ -73,7 +73,7 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
         situacion_actual: body.situacion_actual
     });
 
-    paciente.save( ( err, pacienteGuardado ) => {
+    paciente.save(/*async*/ ( err, pacienteGuardado ) => {
         if (err){
             return res.status(400).json({
                 ok: false,
@@ -83,7 +83,8 @@ app.post('/', /*mdAutenticacion.verificaToken,*/ (req, res)=>{ // recibo todos l
         }
         asignaMedicos(pacienteGuardado._id, especialidad);
 
-
+/*let x = await Medico.find(); //meter los datos de base de datos en variavle
+console.log(x);*/
 
         res.status(201).json({ 
             ok: true,
