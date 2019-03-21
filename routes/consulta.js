@@ -114,37 +114,44 @@ app.get('/administrador/:estado', (req, res, next) => {
 /**
  * GET HORAS DISPONIBLES DE CONSULTA DEL MÉDICO
  */
-app.get('/horasdisponibles/:id', async (req, res, next) => {
-    var d = new Date();
+app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
+    var fecha = req.params.fecha;
     var id = req.params.id;
-    var horas = new Array();
-
-    for(i=0; i<12; i++){
-        // Creo un array bidimensional
-        horas[i] = new Array();
-
-        // Meto un número del mes durante un año, ej: si es marzo, empieza por el 3
-        d.setMonth(d.getMonth()+1)
-        horas[i][0] = d.getMonth();
+    var fecha = new Date(fecha);
+    var hLocal= new Date();
+    var c = 7;
+    hLocal.setHours(hLocal.getHours()+1); // otra vez no se por que tengo que sumar uno a horas
+    if(hLocal.getHours()>7 && hLocal.getHours()<13 && fecha.getDate()==hLocal.getDate()){ // Si es el mismo día no se puede coger cita en horas anteriores
+        var c = hLocal.getHours();
     }
-    //Inicializo la fecha a primera hora que puede hacerse una consulta (esto igual se puede hacer de otra forma)
-    d.setMonth(d.getMonth()-12); 
-    d.setHours(7);
-    d.setMinutes(0);
+    fecha.setHours(c); // Esta es la hora a la que empiezan las consultas médicas
+    var prueba={};
+    var aHorasOcupadas=[];
 
-    for(h=7;h<13;h++){
-        for(m=0;m<60;m+10){
-            var hCita = h+":"+m;
-            horas[0].push(hCita);
+    // Hago la consulta para coger las horas ya ocupadas de ese médico y las guardo en un array en formato con milisegundos
+    let consultasMedico = await Consulta.find({ id_medico: id, estado:"Pendiente"}, 'fecha');
+    consultasMedico.forEach(await function(horasOcupadas){
+        horasOcupadas.fecha.setHours(horasOcupadas.fecha.getHours()-1); // Coge una hora más no se por que y le resto uno (puede que sea por la hora en mi ordenador CUIDADO!!)
+        aHorasOcupadas.push(horasOcupadas.fecha.getTime())
+    });
+
+    for (h=0;h<6;h++){
+        for(m=0;m<60;m+=10){ // Estos dos for indican la cantidad de citas desde las 7 hasta las 12:50  
+            if(!aHorasOcupadas.includes(fecha.getTime())){
+                prueba[fecha.getHours()+":"+fecha.getMinutes()]=fecha.getTime();
+            }      
+            fecha.setMinutes(fecha.getMinutes()+10);
         }
     }
 
-    let consultasMedico = await Consulta.find({ id_medico: id });
-        
-    console.log(horas[0][0]);
+    res.status(200).json({
+        ok: true,
+        prueba
+    });
 
 
-    // NOTA: el primer día tiene que ser desde la hora local del pc, no desde las 7 de la mañana
+
+    // NOTA: el primer día tiene que ser desde la hora local del pc, no desde las 7 de la mañana*/
 });
 
 
