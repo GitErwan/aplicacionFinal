@@ -115,6 +115,13 @@ app.get('/administrador/:estado', (req, res, next) => {
  * GET HORAS DISPONIBLES DE CONSULTA DEL MÉDICO
  */
 app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
+
+// me pasas id usuario y especialidad del médico
+// yo tengo que saber el id del médico que le corresponde
+// tengo que ver las consultas ocupadas que tiene ese médico en ese día
+
+
+
     var fecha = req.params.fecha;
     var id = req.params.id;
     var fecha = new Date(fecha);
@@ -128,7 +135,7 @@ app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
         var k = hLocal.getMinutes();
         // hago esto para que busque desde minutos de 10 en 10, redondea hacia arriba hasta llegar a un múltiplo de 10
         var kAux = ((k/10));
-        hres = (c-6);
+        hres = (13-c);
         k = (parseInt(kAux)*10)+10;
         console.log(k);
     }
@@ -144,7 +151,9 @@ app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
         aHorasOcupadas.push(horasOcupadas.fecha.getTime())
     });
 
+    
     for (h=0;h<(6-hres);h++){
+        console.log(hres);
         for(m=0;m<(60+(k-20));m+=10){ // Estos dos for indican la cantidad de citas desde las 7 hasta las 12:50  
             if(!aHorasOcupadas.includes(fecha.getTime())){
                 horas[fecha.getHours()+":"+fecha.getMinutes()]=fecha.getTime();
