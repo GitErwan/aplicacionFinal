@@ -120,12 +120,21 @@ app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
     var fecha = new Date(fecha);
     var hLocal= new Date();
     var c = 7;
-    hLocal.setHours(hLocal.getHours()+1); // otra vez no se por que tengo que sumar uno a horas
+    var k = 0;
+    var hres = 0;
+
     if(hLocal.getHours()>7 && hLocal.getHours()<13 && fecha.getDate()==hLocal.getDate()){ // Si es el mismo día no se puede coger cita en horas anteriores
         var c = hLocal.getHours();
+        var k = hLocal.getMinutes();
+        // hago esto para que busque desde minutos de 10 en 10, redondea hacia arriba hasta llegar a un múltiplo de 10
+        var kAux = ((k/10));
+        hres = (c-6);
+        k = (parseInt(kAux)*10)+10;
+        console.log(k);
     }
     fecha.setHours(c); // Esta es la hora a la que empiezan las consultas médicas
-    var prueba={};
+    fecha.setMinutes(k); // Esta es la hora a la que empiezan las consultas médicas
+    var horas={};
     var aHorasOcupadas=[];
 
     // Hago la consulta para coger las horas ya ocupadas de ese médico y las guardo en un array en formato con milisegundos
@@ -135,23 +144,19 @@ app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
         aHorasOcupadas.push(horasOcupadas.fecha.getTime())
     });
 
-    for (h=0;h<6;h++){
-        for(m=0;m<60;m+=10){ // Estos dos for indican la cantidad de citas desde las 7 hasta las 12:50  
+    for (h=0;h<(6-hres);h++){
+        for(m=0;m<(60+(k-20));m+=10){ // Estos dos for indican la cantidad de citas desde las 7 hasta las 12:50  
             if(!aHorasOcupadas.includes(fecha.getTime())){
-                prueba[fecha.getHours()+":"+fecha.getMinutes()]=fecha.getTime();
+                horas[fecha.getHours()+":"+fecha.getMinutes()]=fecha.getTime();
             }      
             fecha.setMinutes(fecha.getMinutes()+10);
         }
     }
-
+    
     res.status(200).json({
         ok: true,
-        prueba
+        horas
     });
-
-
-
-    // NOTA: el primer día tiene que ser desde la hora local del pc, no desde las 7 de la mañana*/
 });
 
 
