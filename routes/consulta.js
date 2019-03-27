@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 
 var Consulta = require('../models/consulta');
+var PacienteMedico = require('../models/pacienteMedico');
+var Medico = require('../models/medico');
 
 /**
  * GET CONSULTAS
@@ -114,58 +116,46 @@ app.get('/administrador/:estado', (req, res, next) => {
 /**
  * GET HORAS DISPONIBLES DE CONSULTA DEL MÉDICO
  */
-app.get('/horasdisponibles/:id/:fecha', async (req, res, next) => {
-
-// me pasas id usuario y especialidad del médico
-// yo tengo que saber el id del médico que le corresponde
-// tengo que ver las consultas ocupadas que tiene ese médico en ese día
-
-
+app.get('/horasdisponibles/:id/:especialidad/:fecha', async (req, res, next) => {
 
     var fecha = req.params.fecha;
     var id = req.params.id;
-    var fecha = new Date(fecha);
-    var hLocal= new Date();
-    var c = 7;
-    var k = 0;
-    var hres = 0;
+    var especialidad = req.params.especialidad;
 
-    if(hLocal.getHours()>7 && hLocal.getHours()<13 && fecha.getDate()==hLocal.getDate()){ // Si es el mismo día no se puede coger cita en horas anteriores
-        var c = hLocal.getHours();
-        var k = hLocal.getMinutes();
-        // hago esto para que busque desde minutos de 10 en 10, redondea hacia arriba hasta llegar a un múltiplo de 10
-        var kAux = ((k/10));
-        hres = (13-c);
-        k = (parseInt(kAux)*10)+10;
-        console.log(k);
-    }
-    fecha.setHours(c); // Esta es la hora a la que empiezan las consultas médicas
-    fecha.setMinutes(k); // Esta es la hora a la que empiezan las consultas médicas
-    var horas={};
-    var aHorasOcupadas=[];
-
-    // Hago la consulta para coger las horas ya ocupadas de ese médico y las guardo en un array en formato con milisegundos
-    let consultasMedico = await Consulta.find({ id_medico: id, estado:"Pendiente"}, 'fecha');
-    consultasMedico.forEach(await function(horasOcupadas){
-        horasOcupadas.fecha.setHours(horasOcupadas.fecha.getHours()-1); // Coge una hora más no se por que y le resto uno (puede que sea por la hora en mi ordenador CUIDADO!!)
-        aHorasOcupadas.push(horasOcupadas.fecha.getTime())
-    });
-
+    //let idMedico = await PacienteMedico.find({ id_medico:id})
+    var Medicos = await PacienteMedico.find({ id_paciente:id}, 'id_medico')
+        .populate({
+            path: 'id_medico',
+            match:{especialidad:especialidad},
+            select: '_id especialidad',
+        });
     
-    for (h=0;h<(6-hres);h++){
-        console.log(hres);
-        for(m=0;m<(60+(k-20));m+=10){ // Estos dos for indican la cantidad de citas desde las 7 hasta las 12:50  
-            if(!aHorasOcupadas.includes(fecha.getTime())){
-                horas[fecha.getHours()+":"+fecha.getMinutes()]=fecha.getTime();
-            }      
-            fecha.setMinutes(fecha.getMinutes()+10);
-        }
+    // Saco el id del médico que pertenece a esa especialidad
+    for(i=0; i<Medicos.length; i++){
+        if(Medicos[i]['id_medico']!=null)
+            var idMedico = Medicos[i]['id_medico']['_id'];
     }
-    
+
+    // sacar las consultas médicas de ese día
+    fechaDesde = new Date(fecha);
+    fechaHasta = new Date(fecha);
+    fechaHasta.setDate(fechaHasta.getDate()+1);
+
+    let consultasMedico = await Consulta.find({ id_medico: idMedico, estado:"Pendiente", fecha:{"$gte" : fechaDesde, "$lte" : fechaHasta}}, 'fecha');
+    console.log(consultasMedico);
+
+    // meto todas las horas en un array
+    var fechasOcupadas={};
+    for(i=0; i<consultasMedico.length; i++){
+        if(consultasMedico[i]['fecha']!=null)
+            fechasOcupadas[i]=consultasMedico[i]['fecha'];
+    }
+
     res.status(200).json({
         ok: true,
-        horas
+        fechasOcupadas
     });
+    
 });
 
 
