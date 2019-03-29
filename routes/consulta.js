@@ -122,7 +122,6 @@ app.get('/horasdisponibles/:id/:especialidad/:fecha', async (req, res, next) => 
     var id = req.params.id;
     var especialidad = req.params.especialidad;
 
-    //let idMedico = await PacienteMedico.find({ id_medico:id})
     var Medicos = await PacienteMedico.find({ id_paciente:id}, 'id_medico')
         .populate({
             path: 'id_medico',
@@ -138,6 +137,7 @@ app.get('/horasdisponibles/:id/:especialidad/:fecha', async (req, res, next) => 
 
     // sacar las consultas médicas de ese día
     fechaDesde = new Date(fecha);
+    console.log(fechaDesde);
     fechaHasta = new Date(fecha);
     fechaHasta.setDate(fechaHasta.getDate()+1);
 

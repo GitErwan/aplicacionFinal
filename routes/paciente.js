@@ -1,6 +1,7 @@
 var express = require('express');
 var bcrypt = require('bcryptjs');
 var jwt = require('jsonwebtoken');
+const fetch = require("node-fetch");
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var app = express();
 
@@ -189,6 +190,62 @@ app.put('/:id', (req, res) =>{
 });
 
 /**
+ *   Dar baja paciente
+ */
+
+//[hecho!] recoger id del paciente (con el dni) 
+//[hecho!] cambiar baja del paciente a true
+// poner consultas a canceladas
+// restar a médico (todas las espècialidades)
+
+app.put('/baja/:dni', async (req, res)=>{
+    var dniPaciente = req.params.dni;
+    var body = req.body;
+
+    // Guardo el id del paciente para hacer las demás consultas
+    let idPaciente = await Paciente.find({ dni: dniPaciente}, 'dni');
+    idPaciente = idPaciente[0]['_id'];
+
+  
+/*
+    // Cambia la baja del paciente a true
+    Paciente.findById(idPaciente, (err, paciente)=>{
+        if (err){
+            return res.status(500).json({
+                ok: false,
+                mensaje: 'Error al buscar el usuario',
+                errors: err
+            });
+        }
+
+        if (!paciente){
+            if (err){
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Ese usuario no existe',
+                    errors: err
+                });
+            }
+        }
+
+        paciente.baja = true;
+
+        paciente.save( ( err ) => {
+            if (err){
+                return res.status(400).json({
+                    ok: false,
+                    mensaje: 'Error al actualizar el usuario',
+                    errors: err
+                }); 
+            }
+        }); 
+    });
+
+    // Poner consultas del paciente pendientes a canceladas
+*/
+});
+
+/**
  * BORRAR PACIENTES
  */
 
@@ -216,11 +273,6 @@ app.put('/:id', (req, res) =>{
             paciente: pacienteBorrado
         });
     });
-
-
-
-
-
  });
 
 module.exports = app;

@@ -13,8 +13,8 @@ var Medico = require('../models/medico');
 app.post('/paciente', (req, res)=>{
 
     var body = req.body;
-
-    Paciente.findOne( {tarjeta_sanitaria: body.tarjeta_sanitaria }, (err, pacienteDB)=>{
+    // sólo hace login si no está de baja
+    Paciente.findOne( {tarjeta_sanitaria: body.tarjeta_sanitaria, baja:false }, (err, pacienteDB)=>{
 
         if (err){
             return res.status(500).json({
