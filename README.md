@@ -76,6 +76,52 @@ DELETE: localhost:3000/paciente/:id
 
 ##  MÉDICO
 
+#### GET MEDICOS
+
+Devuelve todos los medicos
+
+```
+GET: localhost:3000/medico
+```
+
+#### POST MEDICO
+
+Crea un nuevo usuario medico en la base de datos
+
+Datos necesarios:
+
+* nombre: { type: String, required },
+* apellido: { type: String, required },
+* usuario: { type: String, unique: true, required },
+* password: { type: String, required },
+* email: { type: String, required }, 
+* telefono: { type: String, required }, 
+* baja: { type: Boolean }, 
+* especialidad: { type: String, required, enum: especialidades }, // Tiene unas especialidades obligatorias para meter
+* npacientesasignados: { type: Number, required, default: 0 }, 
+* rol: { type: String, required, enum: rolMedico }, // Tiene unos roles obligatorias para meter
+
+```
+POST: localhost:3000/medico
+```
+
+#### PUT MEDICO
+
+Actualiza un medico con un id
+
+```
+PUT: localhost:3000/medico/:id
+```
+
+#### DELETE PACIENTE
+
+ESTA FUNCIÓN NO SE USA, AUNQUE EXISTA ESTÁ COMENTADA, PORQUE NO QUEREMOS BORRAR MEDICOS, SOLO DARLOS DE BAJA
+
+Borra un medico con su id
+
+```
+DELETE: localhost:3000/medico/:id
+```
 
 
 

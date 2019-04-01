@@ -17,7 +17,7 @@ var Schema = mongoose.Schema;
 var medicoSchema = new Schema({
     nombre: { type: String, required: [true, 'El nombre es obligatorio'] },
     apellido: { type: String, required: [true, 'El apellido es obligatorio'] },
-    usuario: { type: String, unique: true, required: [true, 'El usuario es obligatorio y puede que ya exista'] },
+    usuario: { type: String, unique: true, required: [true, 'El usuario es obligatorio y/o puede que ya exista'] },
     password: { type: String, required: [true, 'La contrasña es obligatoria'] },
     email: { type: String, required: [true, 'El email es obligatorio'] }, 
     telefono: { type: String, required: [true, 'El telefono es obligatorio'] }, 

@@ -8,6 +8,6 @@ app.get('/:id', pacienteController.getPaciente);
 app.post('/', /*mdAutenticacion.verificaToken,*/ pacienteController.postPaciente);
 app.put('/:id', pacienteController.putPaciente);
 app.put('/baja/:dni', pacienteController.bajaPaciente);
-app.delete('/:id', pacienteController.deletePaciente);
+//app.delete('/:id', pacienteController.deletePaciente);
 
 module.exports = app;
