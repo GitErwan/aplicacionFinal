@@ -3,7 +3,6 @@ var Medico = require('../models/medico');
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var bcrypt = require('bcryptjs');
 
-
 /**
  * GET MEDICOS
  * Devuelve todos los médicos
