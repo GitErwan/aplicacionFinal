@@ -27,7 +27,6 @@ app.use(bodyParser.json())
 /**
  * Importar rutas
  */
-var appRoutes = require('./routes/app');
 var pacienteRoutes = require('./routes/paciente');
 var medicoRoutes = require('./routes/medico');
 var consultaRoutes = require('./routes/consulta');
@@ -48,7 +47,6 @@ app.use('/medico', medicoRoutes);
 app.use('/consulta', consultaRoutes);
 app.use('/login', loginRoutes);
 app.use('/pacienteMedico', pacienteMedicoRoutes);
-app.use('/', appRoutes);
 
 
 // Escuchar peticiones

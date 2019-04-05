@@ -266,9 +266,6 @@ function deletePaciente(req, res, next){
     });
 }
 
-
-
-
 module.exports = {
     getPacientes,
     getPaciente,
