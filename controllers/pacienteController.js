@@ -191,7 +191,7 @@ function putPaciente(req, res, next){
  * Pone consultas a canceladas
  * Resta a médico el número de pacientes asignados (todas las especialidades)
  */
-async function  bajaPaciente (req, res, next){
+async function bajaPaciente (req, res, next){
     var dniPaciente = req.params.dni;
 
     // Guardo el id del paciente para hacer las demás consultas
@@ -203,54 +203,11 @@ async function  bajaPaciente (req, res, next){
     
     const medicosPacientes = await pacienteMedico.find( {id_paciente : idPaciente[0]['_id']} );
 
-    await medicosPacientes.forEach(function(medicoPaciente) {
-        var idMed = medicoPaciente.id_medico;        
-        Medico.findByIdAndUpdate({idMed : idPaciente[0]['_id']}, medicoPaciente.npacientesasignados = 5  );
-    });
-       
-    
-    
-    //console.log(rex.n);
-    //recojo todas las consultas activas del paciente
-    //let consultas = await Consulta.find({ id_paciente: idPaciente[0]['_id'] })
-
-    //console.log(consultas);
-/*
-    // Cambia la baja del paciente a true
-    Paciente.findById(idPaciente, (err, paciente)=>{
-        if (err){
-            return res.status(500).json({
-                ok: false,
-                mensaje: 'Error al buscar el usuario',
-                errors: err
-            });
-        }
-
-        if (!paciente){
-            if (err){
-                return res.status(400).json({
-                    ok: false,
-                    mensaje: 'Ese usuario no existe',
-                    errors: err
-                });
-            }
-        }
-
-        paciente.baja = true;
-
-        paciente.save( ( err ) => {
-            if (err){
-                return res.status(400).json({
-                    ok: false,
-                    mensaje: 'Error al actualizar el usuario',
-                    errors: err
-                }); 
-            }
-        }); 
-    });
-
-    // Poner consultas del paciente pendientes a canceladas
-*/
+    await medicosPacientes.forEach(async function(medicoPaciente) {
+        var idMed = medicoPaciente.id_medico;
+        var npac = medicoPaciente.npacientesasignados-1;
+        await Medico.findOneAndUpdate({ _id : idMed }, {$inc : {npacientesasignados: -1}}  );
+    });         
 }
 
 /**
