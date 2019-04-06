@@ -138,12 +138,10 @@ async function getHorasOcupadas (req, res, next){
 
     // sacar las consultas médicas de ese día
     fechaDesde = new Date(fecha);
-    console.log(fechaDesde);
     fechaHasta = new Date(fecha);
     fechaHasta.setDate(fechaHasta.getDate()+1);
 
     let consultasMedico = await Consulta.find({ id_medico: idMedico, estado:"Pendiente", fecha:{"$gte" : fechaDesde, "$lte" : fechaHasta}}, 'fecha');
-    console.log(consultasMedico);
 
     // meto todas las horas en un array
     var fechasOcupadas={};

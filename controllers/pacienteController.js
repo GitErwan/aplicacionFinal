@@ -1,4 +1,5 @@
 var Paciente = require('../models/paciente');
+var Consulta = require('../models/consulta');
 var Medico = require('../models/medico');
 var pacienteMedico = require('../models/pacienteMedico');
 var especialidad = require('../models/especialidades');
@@ -129,7 +130,7 @@ function asignaMedicos(idPaciente, especialidad){
 function putPaciente(req, res, next){
     var id = req.params.id;
     var body = req.body;
-
+    
     Paciente.findById(id, (err, paciente)=>{
         if (err){
             return res.status(500).json({
@@ -185,19 +186,35 @@ function putPaciente(req, res, next){
 
 /**
  * BAJA PACIENTE
- * Cambiar baja del paciente a true
+ * La baja del paciente se hace con el dni
+ * Cambia baja del paciente a true
  * Pone consultas a canceladas
  * Resta a médico el número de pacientes asignados (todas las especialidades)
  */
 async function  bajaPaciente (req, res, next){
     var dniPaciente = req.params.dni;
-    var body = req.body;
 
     // Guardo el id del paciente para hacer las demás consultas
-    let idPaciente = await Paciente.find({ dni: dniPaciente}, 'dni');
-    idPaciente = idPaciente[0]['_id'];
+    let idPaciente = await Paciente.find({ dni: dniPaciente});
 
-  
+    await Paciente.findByIdAndUpdate( idPaciente[0]['_id'], {baja : 1}) // pone baja del paciente a true
+    
+    await Consulta.updateMany({ id_paciente: idPaciente[0]['_id'], estado : "Pendiente" }, { estado : "Cancelada" }) // Modifico las consultas con el id de ese paciente y en estado pendiente a canceladas
+    
+    const medicosPacientes = await pacienteMedico.find( {id_paciente : idPaciente[0]['_id']} );
+
+    await medicosPacientes.forEach(function(medicoPaciente) {
+        var idMed = medicoPaciente.id_medico;        
+        Medico.findByIdAndUpdate({idMed : idPaciente[0]['_id']}, medicoPaciente.npacientesasignados = 5  );
+    });
+       
+    
+    
+    //console.log(rex.n);
+    //recojo todas las consultas activas del paciente
+    //let consultas = await Consulta.find({ id_paciente: idPaciente[0]['_id'] })
+
+    //console.log(consultas);
 /*
     // Cambia la baja del paciente a true
     Paciente.findById(idPaciente, (err, paciente)=>{
