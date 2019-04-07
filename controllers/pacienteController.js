@@ -205,7 +205,6 @@ async function bajaPaciente (req, res, next){
 
     await medicosPacientes.forEach(async function(medicoPaciente) {
         var idMed = medicoPaciente.id_medico;
-        var npac = medicoPaciente.npacientesasignados-1;
         await Medico.findOneAndUpdate({ _id : idMed }, {$inc : {npacientesasignados: -1}}  );
     });         
 }

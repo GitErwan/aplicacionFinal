@@ -2,6 +2,21 @@
 var Medico = require('../models/medico');
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var bcrypt = require('bcryptjs');
+var especialidad = require('../models/especialidades');
+
+/**
+ * GET ESPECIALIDADES
+ * Devuelve todas las especialidades médicas
+ */
+function getEspecialidades(req, res, next){
+
+
+        res.status(200).json({
+            ok: true,
+            medicos : especialidad
+        });
+  
+}
 
 /**
  * GET MEDICOS
@@ -154,5 +169,6 @@ module.exports = {
     getMedicos,
     postMedico,
     putMedico,
-    deleteMedico
+    deleteMedico,
+    getEspecialidades
 };
