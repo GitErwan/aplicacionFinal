@@ -1,5 +1,6 @@
 
 var Medico = require('../models/medico');
+var Consulta = require('../models/consulta');
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var bcrypt = require('bcryptjs');
 var especialidad = require('../models/especialidades');
@@ -136,6 +137,26 @@ function putMedico(req, res, next){
 }
 
 /**
+ * PUT BAJA MEDICO
+ * Los catalanes hacen cosas
+ */
+async function putBajaMedico(req, res, next){
+    var id = req.params.id;
+
+    // Recojo la especialidad del médico
+    var especialidad = await Medico.findById( {_id:id}, "especialidad" );
+    especialidad = especialidad.especialidad;
+
+    // Recojo las consultas a reasignar
+    var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
+
+    // Recoger los ids de los médicos de esa especialidad y ordenarlos de menor a mayor según la cantidad de consultas que tengan
+    var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad }, "_id", {_id : { $not:id } });
+    //idsMedicosDeEsaEspecialidad = await Consulta.find({ especialidad:especialidad }, "_id", {$sort : { count : -1 } })
+    console.log(idsMedicosDeEsaEspecialidad + " " + id);
+}
+
+/**
  * DELETE MEDICO
  * Borra un médico
  */
@@ -170,5 +191,6 @@ module.exports = {
     postMedico,
     putMedico,
     deleteMedico,
-    getEspecialidades
+    getEspecialidades,
+    putBajaMedico
 };

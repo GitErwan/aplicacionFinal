@@ -7,6 +7,7 @@ app.get('/', medicoController.getMedicos);
 app.get('/especialidades', medicoController.getEspecialidades);
 app.post('/', medicoController.postMedico);
 app.put('/:id', medicoController.putMedico);
+app.put('/baja/:id', medicoController.putBajaMedico);
 //app.delete('/:id', medicoController.deleteMedico);
 
 module.exports = app;
