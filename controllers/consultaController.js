@@ -1,6 +1,7 @@
 var Consulta = require('../models/consulta');
 var PacienteMedico = require('../models/pacienteMedico');
 var Consulta = require('../models/consulta');
+var Medico = require('../models/medico');
 var PacienteMedico = require('../models/pacienteMedico');
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 
@@ -160,7 +161,7 @@ async function getHorasOcupadas (req, res, next){
  * POST CONSULTAS
  * Crea una consulta
  */
-function postConsultas(req, res, next){
+async function postConsultas(req, res, next){
     var body = req.body;
     var consulta = new Consulta({
         id_medico: body.id_medico,
@@ -186,17 +187,18 @@ function postConsultas(req, res, next){
             consulta: consultaGuardado
         });
     });
+    await Medico.findByIdAndUpdate( body.id_medico , {$inc : {nconsultasasignadas: +1}});
 };
 
 /**
  * PUT CONSULTAS
  * Acualiza una consulta
  */
-function putConsultas(req, res, next){
+async function putConsultas(req, res, next){
     var id = req.params.id;
     var body = req.body;
 
-    Consulta.findById(id, (err, consulta)=>{
+    Consulta.findById(id, async (err, consulta) =>{
         if (err){
             return res.status(500).json({
                 ok: false,
@@ -214,6 +216,8 @@ function putConsultas(req, res, next){
                 });
             }
         }
+        await Medico.findByIdAndUpdate( consulta.id_medico , {$inc : {nconsultasasignadas: -1}}); // quito uno al médico de antes
+        await Medico.findByIdAndUpdate( body.id_medico , {$inc : {nconsultasasignadas: +1}}); // sumo 1 al médico nuevo
 
         if(consulta.id_medico != body.id_medico) consulta.id_medico = body.id_medico
         if(consulta.id_paciente != body.id_paciente) consulta.id_paciente = body.id_paciente

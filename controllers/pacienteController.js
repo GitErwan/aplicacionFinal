@@ -201,12 +201,21 @@ async function bajaPaciente (req, res, next){
     
     await Consulta.updateMany({ id_paciente: idPaciente[0]['_id'], estado : "Pendiente" }, { estado : "Cancelada" }) // Modifico las consultas con el id de ese paciente y en estado pendiente a canceladas
     
+    //Resta a los médicos en el parámetro npacientesasignados
     const medicosPacientes = await pacienteMedico.find( {id_paciente : idPaciente[0]['_id']} );
-
     await medicosPacientes.forEach(async function(medicoPaciente) {
         var idMed = medicoPaciente.id_medico;
-        await Medico.findOneAndUpdate({ _id : idMed }, {$inc : {npacientesasignados: -1}}  );
+        await Medico.findOneAndUpdate({ _id : idMed }, {$inc : {npacientesasignados: -1}});
     });         
+
+    //Resta a los médicos en el parámetro nconsultasasignadas (COMPROBAR SI FUNCIONA!!)
+    const consultas = await Consulta.find( {id_paciente : idPaciente[0]['_id']} );
+    await consultas.forEach(async function(medicoPaciente) {
+        var idMed = medicoPaciente.id_medico;
+        await Medico.findByIdAndUpdate({ _id : idMed } , {$inc : {nconsultasasignadas: -1}}); //Esto se puede hacer en una sola consulta MEJORAR!
+    });  
+    
+
 }
 
 /**

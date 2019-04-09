@@ -143,6 +143,9 @@ function putMedico(req, res, next){
 async function putBajaMedico(req, res, next){
     var id = req.params.id;
 
+    //Pongo al médico en baja
+    await Medico.findByIdAndUpdate( id , { baja:true });
+
     // Recojo la especialidad del médico
     var especialidad = await Medico.findById( {_id:id}, "especialidad" );
     especialidad = especialidad.especialidad;
@@ -150,10 +153,12 @@ async function putBajaMedico(req, res, next){
     // Recojo las consultas a reasignar
     var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
 
-    // Recoger los ids de los médicos de esa especialidad y ordenarlos de menor a mayor según la cantidad de consultas que tengan
-    var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad }, "_id", {_id : { $not:id } });
-    //idsMedicosDeEsaEspecialidad = await Consulta.find({ especialidad:especialidad }, "_id", {$sort : { count : -1 } })
-    console.log(idsMedicosDeEsaEspecialidad + " " + id);
+    // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y ordenados de menor a mayor según la cantidad de consultas que tienen asignadas
+    var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
+    // Ordenarlos de menor a mayor según la cantidad de consultas que tengan
+
+
+
 }
 
 /**
