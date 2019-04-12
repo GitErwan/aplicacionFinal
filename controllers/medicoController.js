@@ -152,21 +152,21 @@ async function putBajaMedico(req, res, next){
 
     // Recojo las consultas a reasignar y las meto en un array para comparar más adelante
     var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
-    var aConsultasParaReasignar=[];
-    consultasParaReasignar.forEach(async function(consulta) {
-        await aConsultasParaReasignar.push(consulta.fecha);
-    })
 
     // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y los ordeno de menor a mayor según la cantidad de consultas que tienen asignadas
     var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
 
     idsMedicosDeEsaEspecialidad.forEach(async function(idMedico) {
-        var idMedico = idMedico.id;
-        var consultasMedico = await Consulta.find({ id_medico : idMedico, estado : "Pendiente" }, "fecha")
-        
-        consultasMedico.forEach(async function(consultaMedico) {
-            // tengo que comprobar si el primer usuario tiene asignada la fecha consultaMedico
-        });        
+        //Compruebo una a una las horas a asignar con las horas libres del paciente
+        consultasParaReasignar.forEach(async function(consulta) {
+            var consultasMedico = await Consulta.find({ id_medico : (idMedico.id), estado : "Pendiente", fecha : (consulta.fecha) })
+            
+            if(consultasMedico.length<=0){
+                console.log("no tiene esa hora ocupada METER HORA");
+            }else{
+                console.log("Ya tiene esa hora ocupada");
+            }
+        })   
     });
       
 
