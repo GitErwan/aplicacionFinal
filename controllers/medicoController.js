@@ -150,15 +150,12 @@ async function putBajaMedico(req, res, next){
     var especialidad = await Medico.findById( {_id:id}, "especialidad" );
     especialidad = especialidad.especialidad;
 
-    // Recojo las consultas a reasignar
+    // Recojo las consultas a reasignar y las meto en un array para comparar más adelante
     var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
     var aConsultasParaReasignar=[];
     consultasParaReasignar.forEach(async function(consulta) {
         await aConsultasParaReasignar.push(consulta.fecha);
     })
-
-console.log(aConsultasParaReasignar[0])
-
 
     // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y los ordeno de menor a mayor según la cantidad de consultas que tienen asignadas
     var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
