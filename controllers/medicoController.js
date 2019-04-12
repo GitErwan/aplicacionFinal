@@ -138,7 +138,7 @@ function putMedico(req, res, next){
 
 /**
  * PUT BAJA MEDICO
- * Los catalanes hacen cosas
+ * Modifica un médico
  */
 async function putBajaMedico(req, res, next){
     var id = req.params.id;
@@ -152,11 +152,26 @@ async function putBajaMedico(req, res, next){
 
     // Recojo las consultas a reasignar
     var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
+    var aConsultasParaReasignar=[];
+    consultasParaReasignar.forEach(async function(consulta) {
+        await aConsultasParaReasignar.push(consulta.fecha);
+    })
 
-    // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y ordenados de menor a mayor según la cantidad de consultas que tienen asignadas
+console.log(aConsultasParaReasignar[0])
+
+
+    // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y los ordeno de menor a mayor según la cantidad de consultas que tienen asignadas
     var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
-    // Ordenarlos de menor a mayor según la cantidad de consultas que tengan
 
+    idsMedicosDeEsaEspecialidad.forEach(async function(idMedico) {
+        var idMedico = idMedico.id;
+        var consultasMedico = await Consulta.find({ id_medico : idMedico, estado : "Pendiente" }, "fecha")
+        
+        consultasMedico.forEach(async function(consultaMedico) {
+            // tengo que comprobar si el primer usuario tiene asignada la fecha consultaMedico
+        });        
+    });
+      
 
 
 }

@@ -208,14 +208,17 @@ async function bajaPaciente (req, res, next){
         await Medico.findOneAndUpdate({ _id : idMed }, {$inc : {npacientesasignados: -1}});
     });         
 
-    //Resta a los médicos en el parámetro nconsultasasignadas (COMPROBAR SI FUNCIONA!!)
+    //Resta a los médicos en el parámetro nconsultasasignadas
     const consultas = await Consulta.find( {id_paciente : idPaciente[0]['_id']} );
-    await consultas.forEach(async function(medicoPaciente) {
-        var idMed = medicoPaciente.id_medico;
+    await consultas.forEach(async function(cons) {
+        var idMed = cons.id_medico;
         await Medico.findByIdAndUpdate({ _id : idMed } , {$inc : {nconsultasasignadas: -1}}); //Esto se puede hacer en una sola consulta MEJORAR!
     });  
     
-
+    res.status(200).json({ 
+        ok: true,
+        mensaje: "Baja correcta"
+    })
 }
 
 /**
