@@ -140,9 +140,8 @@ function putMedico(req, res, next){
  * PUT BAJA MEDICO
  * Modifica un médico
  */
-async function putBajaMedico(req, res, next){
+async function putBajaMedico(req, res, next){    
     var id = req.params.id;
-
     //Pongo al médico en baja
     await Medico.findByIdAndUpdate( id , { baja:true });
 
@@ -150,50 +149,56 @@ async function putBajaMedico(req, res, next){
     var especialidad = await Medico.findById( {_id:id}, "especialidad" );
     especialidad = especialidad.especialidad;
 
-    // Recojo las consultas a reasignar y las meto en un array para comparar más adelante
+    // Recojo las consultas a reasignar
     var consultasParaReasignar = await Consulta.find({ id_medico : id, estado : "Pendiente" })
-
+    
     // Recorro todos los elementos del objeto
-    for(x=0; x<=consultasParaReasignar.length; x++){
+    for(x=0; x<consultasParaReasignar.length; x++){        
         // Recojo todos los ids de los médicos de esa especialidad menos la dada de baja y los ordeno de menor a mayor según la cantidad de consultas que tienen asignadas
         var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
 
-        idsMedicosDeEsaEspecialidad.forEach(async function(idMedico) {
-            var consultaCreada=false
-            //Compruebo una a una las horas a asignar con las horas libres del paciente
-            consultasParaReasignar.forEach(async function(consulta) {
-                var consultasMedico = await Consulta.find({ id_medico : (idMedico.id), estado : "Pendiente", fecha : (consulta.fecha) })
-                
-                if(consultasMedico.length<=0){
+        // recorro los médicos a los que voy a asignar las consultas
+        for(z=0; z<idsMedicosDeEsaEspecialidad.length; z++){
+           
+            //var consultaCreada=false
+            
+            //Compruebo una a una las horas a asignar con las horas libres del paciente            
+                var consultasMedico = await Consulta.find({ id_medico : (idsMedicosDeEsaEspecialidad[z].id), estado : "Pendiente", fecha : (consultasParaReasignar[x].fecha) })
+                console.log(consultasMedico.length)
+                if(consultasMedico.length==0){ // si existe que no entre
+                    console.log("modifico consulta")
                     // Creo nuevamente la consulta
-                    var consultaController = require('../controllers/consultaController.js')                
-                    req.body.id_medico = consulta.id_medico;
-                    req.body.id_paciente = consulta.id_paciente;
-                    req.body.fecha = consulta.fecha;
-                    req.body.descripcion_paciente = consulta.descripcion_paciente;
-                    req.body.diagnostico_medico = consulta.diagnostico_medico;
-                    req.body.especialidad = consulta.especialidad;
-                    req.body.estado = consulta.estado;
-                    consultaController.postConsultas(req, res, next)
-                    
-                    //Elimino del objeto
-                    var pos = consultasParaReasignar.indexOf(consulta);
-                    consultasParaReasignar.splice(pos, 1);
-                    console.log(consultasParaReasignar);
+                   /*var consultaController = require('../controllers/consultaController.js')    
+                    req.params.id = consultasParaReasignar._id[x]; // id consulta a modificar
 
-                    consultaCreada=true;
+                    req.body.id_medico = idsMedicosDeEsaEspecialidad[z].id_medico; // Parámetros a modificar (sólo cambbio el id del médico al nuevo)
+                    req.body.id_paciente = consultasParaReasignar[y].id_paciente;
+                    req.body.fecha = consultasParaReasignar[y].fecha;
+                    req.body.descripcion_paciente = consultasParaReasignar[y].descripcion_paciente;
+                    req.body.diagnostico_medico = consultasParaReasignar[y].diagnostico_medico;
+                    req.body.especialidad = consultasParaReasignar[y].especialidad;
+                    req.body.estado = consultasParaReasignar[y].estado;
+                    consultaController.putConsultas(req, res, next)
+                    */
+                    //Elimino del objeto
+                    var pos = consultasParaReasignar.indexOf(consultasParaReasignar[x]);
+                    consultasParaReasignar.splice(pos, 1);
+                    
+                    //consultaCreada=true;
 
                     break;
                 }else{
                     console.log("Ya tiene esa hora ocupada");
                 }
-            });
-            if(consultaCreada==true){break;}
-        });      
+            //});
+            //}
+            //if(consultaCreada==true){break;}
+        //});
+        }      
     }
 
     //Aquí me queda hacer que si ha quedado alguna consulta por asignar que se ponga como no asignada
-
+    console.log(consultasParaReasignar);
 }
 
 /**

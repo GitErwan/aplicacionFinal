@@ -161,8 +161,7 @@ async function getHorasOcupadas (req, res, next){
  * POST CONSULTAS
  * Crea una consulta
  */
-async function postConsultas(req, res, next){
-    console.log("dent");
+async function postConsultas(req, res, next){    
     var body = req.body;
     var consulta = new Consulta({
         id_medico: body.id_medico,
