@@ -163,6 +163,14 @@ async function getHorasOcupadas (req, res, next){
  */
 async function postConsultas(req, res, next){    
     var body = req.body;
+
+    // Si ese médico está de baja elegir otro
+    var medico = await Medico.findById(body.id_medico);    
+    if(medico.baja == true){
+        var idMedicoDeEsaEspecialidad = await Medico.find({ especialidad:medico.especialidad, baja : false }, "_id",).sort('nconsultasasignadas');        
+        body.id_medico = idMedicoDeEsaEspecialidad[0]._id;
+    }
+
     var consulta = new Consulta({
         id_medico: body.id_medico,
         id_paciente: body.id_paciente,

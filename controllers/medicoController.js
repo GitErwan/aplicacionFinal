@@ -158,42 +158,33 @@ async function putBajaMedico(req, res, next){
         var idsMedicosDeEsaEspecialidad = await Medico.find({ especialidad:especialidad, baja : false }, "_id",).sort('nconsultasasignadas');
 
         // recorro los médicos a los que voy a asignar las consultas
-        for(z=0; z<idsMedicosDeEsaEspecialidad.length; z++){
-           
-            //var consultaCreada=false
-            
+        for(z=0; z<idsMedicosDeEsaEspecialidad.length; z++){            
             //Compruebo una a una las horas a asignar con las horas libres del paciente            
-                var consultasMedico = await Consulta.find({ id_medico : (idsMedicosDeEsaEspecialidad[z].id), estado : "Pendiente", fecha : (consultasParaReasignar[x].fecha) })
-                console.log(consultasMedico.length)
-                if(consultasMedico.length==0){ // si existe que no entre
-                    console.log("modifico consulta")
-                    
-                    var consultaController = require('../controllers/consultaController.js')    
-                    req.params.id = consultasParaReasignar[x]._id; // id consulta a modificar
+            var consultasMedico = await Consulta.find({ id_medico : (idsMedicosDeEsaEspecialidad[z].id), estado : "Pendiente", fecha : (consultasParaReasignar[x].fecha) })
+            console.log(consultasMedico.length)
+            if(consultasMedico.length==0){ // si existe que no entre
+                console.log("modifico consulta")
+                
+                var consultaController = require('../controllers/consultaController.js')    
+                req.params.id = consultasParaReasignar[x]._id; // id consulta a modificar
 
-                    req.body.id_medico = idsMedicosDeEsaEspecialidad[z]._id; // Parámetros a modificar (sólo cambbio el id del médico al nuevo)
-                    req.body.id_paciente = consultasParaReasignar[x].id_paciente;
-                    req.body.fecha = consultasParaReasignar[x].fecha;
-                    req.body.descripcion_paciente = consultasParaReasignar[x].descripcion_paciente;
-                    req.body.diagnostico_medico = consultasParaReasignar[x].diagnostico_medico;
-                    req.body.especialidad = consultasParaReasignar[x].especialidad;
-                    req.body.estado = consultasParaReasignar[x].estado;
-                    consultaController.putConsultas(req, res, next)
-                    
-                    //Elimino del objeto
-                    var pos = consultasParaReasignar.indexOf(consultasParaReasignar[x]);
-                    consultasParaReasignar.splice(pos, 1);
-                    
-                    //consultaCreada=true;
-
-                    break;
-                }else{
-                    console.log("Ya tiene esa hora ocupada");
-                }
-            //});
-            //}
-            //if(consultaCreada==true){break;}
-        //});
+                req.body.id_medico = idsMedicosDeEsaEspecialidad[z]._id; // Parámetros a modificar (sólo cambbio el id del médico al nuevo)
+                req.body.id_paciente = consultasParaReasignar[x].id_paciente;
+                req.body.fecha = consultasParaReasignar[x].fecha;
+                req.body.descripcion_paciente = consultasParaReasignar[x].descripcion_paciente;
+                req.body.diagnostico_medico = consultasParaReasignar[x].diagnostico_medico;
+                req.body.especialidad = consultasParaReasignar[x].especialidad;
+                req.body.estado = consultasParaReasignar[x].estado;
+                consultaController.putConsultas(req, res, next)
+                
+                //Elimino del objeto
+                var pos = consultasParaReasignar.indexOf(consultasParaReasignar[x]);
+                consultasParaReasignar.splice(pos, 1);
+                
+                break;
+            }else{
+                console.log("Ya tiene esa hora ocupada");
+            }
         }      
     }
 
