@@ -1,4 +1,4 @@
-
+var fs = require('fs');
 
 /**
  * Subir Imagen
@@ -8,6 +8,11 @@ function subirImagen(req, res, next){
     var tipo = req.params.tipo;
     var id = req.params.id;
 
+    // Creo la carpeta uploads si no existe
+    if(!fs.existsSync('uploads')){
+        fs.mkdirSync('uploads');
+    }
+
     // Tipos de coleccion
     var tiposValidos = ['medicos', 'pacientes'];
     if( tiposValidos.indexOf( tipo ) < 0 ){
@@ -16,6 +21,12 @@ function subirImagen(req, res, next){
             mensaje: "Coección no válida",
             errors: { message: "sólo se admite medicos y pacientes"}
         });
+    }
+    var carpeta = `uploads/${tipo}`;
+
+    // Si no existe el directorio lo creo
+    if(!fs.existsSync(carpeta)){
+        fs.mkdirSync(carpeta);
     }
 
     if ( !req.files ){
