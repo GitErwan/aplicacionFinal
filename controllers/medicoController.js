@@ -5,18 +5,18 @@ var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta v
 var bcrypt = require('bcryptjs');
 var especialidad = require('../models/especialidades');
 
+var uploadController = require('../controllers/uploadController.js')
+
+
 /**
  * GET ESPECIALIDADES
  * Devuelve todas las especialidades médicas
  */
 function getEspecialidades(req, res, next){
-
-
-        res.status(200).json({
-            ok: true,
-            medicos : especialidad
-        });
-  
+    res.status(200).json({
+        ok: true,
+        medicos : especialidad
+    }); 
 }
 
 /**
@@ -48,6 +48,8 @@ function getMedicos(req, res, next){
  */
 function postMedico(req, res, next){
     var body = req.body;
+    console.log(body.nombre);
+    console.log(body);
     var medico = new Medico({
         nombre: body.nombre,
         apellido: body.apellido,
@@ -57,7 +59,8 @@ function postMedico(req, res, next){
         telefono: body.telefono,
         baja: false,
         especialidad: body.especialidad,
-        rol: body.rol,
+        rol: body.rol,        
+        img: uploadController.subirImagen(body.files, 'medicos')
     });
 
     medico.save( ( err, medicoGuardado ) => {

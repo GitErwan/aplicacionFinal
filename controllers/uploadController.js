@@ -1,12 +1,13 @@
+
 var fs = require('fs');
 
 /**
  * Subir Imagen
  * Sube la imagen del médico o del paciente
  */
-function subirImagen(req, res, next){
-    var tipo = req.params.tipo;
-    var id = req.params.id;
+function subirImagen(imagen, tipo){
+    //var tipo = req.params.tipo;
+    //var id = req.params.id;
 
     // Creo la carpeta uploads si no existe
     if(!fs.existsSync('uploads')){
@@ -29,7 +30,8 @@ function subirImagen(req, res, next){
         fs.mkdirSync(carpeta);
     }
 
-    if ( !req.files ){
+    if ( !imagen ){// CREO QUE NO ES NECESARIO PORQUE SIEMPRE VIENE UNA IMAGEN
+        console.log(imagen)
         return res.status(400).json({
             ok: false,
             mensaje: "Error seleccionando imagen",
@@ -38,7 +40,7 @@ function subirImagen(req, res, next){
     }
 
     // Obtener el nombre del archivo
-    var archivo = req.files.imagen;
+    var archivo = imagen.imagen;
     var nombreSplit = archivo.name.split('.');
     var extension = nombreSplit[nombreSplit.length -1];
 
@@ -53,7 +55,7 @@ function subirImagen(req, res, next){
     }
 
     // Nombre archivo personalizado (id + número random + extensión)
-    var nombreArchivo = `${ id }-${ new Date().getMilliseconds()}.${ extension }`;
+    var nombreArchivo = `${ new Date().getTime()}.${ extension }`;
 
     // Mover archivo del temporal al path
     var path = `./uploads/${ tipo }/${ nombreArchivo }`;
@@ -68,10 +70,11 @@ function subirImagen(req, res, next){
         }
     });
 
-    res.status(200).json({
+    return path
+    /*res.status(200).json({
         ok: true,
         mensaje : 'Imagen actualizada'
-    });
+    });*/
 
 }
 module.exports = {

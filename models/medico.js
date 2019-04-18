@@ -26,7 +26,7 @@ var medicoSchema = new Schema({
     npacientesasignados: { type: Number, required: [true, 'npacientesasignados obligatorio'], default: 0 }, 
     nconsultasasignadas: { type: Number, required: [true, 'nconsultasasignadas obligatorio'], default: 0 }, 
     rol: { type: String, required: [true, 'El rol es obligatorio'], enum: rolMedico },
-    
+    img: { type: String, required: false },
 });
 
 medicoSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });
