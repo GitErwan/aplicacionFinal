@@ -24,7 +24,7 @@ function getEspecialidades(req, res, next){
  * Devuelve todos los médicos
  */
 function getMedicos(req, res, next){
-    Medico.find({ }, 'nombre apellido usuario email telefono baja especialidad npacientesasignados') // con esto indico que el get devuelva todos los datos menos la contraseña
+    Medico.find({ }, 'nombre apellido usuario email telefono baja especialidad npacientesasignados img') // con esto indico que el get devuelva todos los datos menos la contraseña
     .exec(
         (err, medicos) => {
         if (err){
@@ -48,8 +48,7 @@ function getMedicos(req, res, next){
  */
 function postMedico(req, res, next){
     var body = req.body;
-    console.log(body.nombre);
-    console.log(body);
+    
     var medico = new Medico({
         nombre: body.nombre,
         apellido: body.apellido,
@@ -60,7 +59,7 @@ function postMedico(req, res, next){
         baja: false,
         especialidad: body.especialidad,
         rol: body.rol,        
-        img: uploadController.subirImagen(body.files, 'medicos')
+        img: uploadController.subirImagen(req.files, 'medicos')
     });
 
     medico.save( ( err, medicoGuardado ) => {
