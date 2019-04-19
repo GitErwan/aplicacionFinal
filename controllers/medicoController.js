@@ -118,6 +118,10 @@ function putMedico(req, res, next){
         if(medico.telefono != body.telefono) medico.telefono = body.telefono
         if(medico.baja != body.baja) medico.baja = body.baja
         if(medico.especialidad != body.especialidad) medico.especialidad = body.especialidad
+        if(req.files){ // si se está mandando una imagen (en el frontend comprobar si se manda la misma o no, si es la misma no mandar)
+            console.log(req.files)
+            medico.img = uploadController.subirImagen(req.files, 'medicos');
+        }
         
         medico.save( ( err, medicoGuardado ) => {
             if (err){

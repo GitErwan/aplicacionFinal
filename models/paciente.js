@@ -15,6 +15,7 @@ var pacienteSchema = new Schema({
     direccion: { type: String, required: [true, 'La dirección es obligatoria'] }, 
     tarjeta_sanitaria: { type: String, unique: true, required: [true, 'La tarjeta sanitaria es obligatoria'] }, 
     baja: { type: Boolean }, 
+    img: { type: String, required: false },
 });
 
 pacienteSchema.plugin( uniqueValidator, { message: 'el {PATH} debe ser único' });

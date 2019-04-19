@@ -5,13 +5,14 @@ var pacienteMedico = require('../models/pacienteMedico');
 var especialidad = require('../models/especialidades');
 var bcrypt = require('bcryptjs');
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
+var uploadController = require('../controllers/uploadController.js')
 
 /**
  * GET PACIENTES    
  * Devuelve todos los pacientes
  */
 function getPacientes(req, res, next) {
-    Paciente.find({ }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual') // con esto indico que el get devuelva todos los datos menos la contraseña
+    Paciente.find({ }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual img') // con esto indico que el get devuelva todos los datos menos la contraseña
         .exec(
             (err, pacientes) => {
             if (err){
@@ -35,7 +36,7 @@ function getPacientes(req, res, next) {
  */
 function getPaciente(req, res, next){
     var id = req.params.id;
-    Paciente.find({ _id:id }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual') // con esto indico que el get devuelva todos los datos menos la contraseña
+    Paciente.find({ _id:id }, 'nombre apellido dni email telefono direccion tarjeta_sanitaria situacion_actual img') // con esto indico que el get devuelva todos los datos menos la contraseña
         .exec(
             (err, pacientes) => {
             if (err){
@@ -70,7 +71,8 @@ function postPaciente(req, res, next){
         telefono: body.telefono,
         direccion: body.direccion,
         tarjeta_sanitaria: tarjetaSanitaria,
-        baja: false
+        baja: false,
+        img: uploadController.subirImagen(req.files, 'pacientes')
     });
 
     paciente.save( ( err, pacienteGuardado ) => {
@@ -164,6 +166,9 @@ function putPaciente(req, res, next){
         if(paciente.telefono != body.telefono) paciente.telefono = body.telefono
         if(paciente.direccion != body.direccion) paciente.direccion = body.direccion
         if(paciente.baja != body.baja) paciente.baja = body.baja
+        if(req.files){ // si se está mandando una imagen (en el frontend comprobar si se manda la misma o no, si es la misma no mandar)
+            paciente.img = uploadController.subirImagen(req.files, 'pacientes');
+        }
         
         paciente.save( ( err, pacienteGuardado ) => {
             if (err){

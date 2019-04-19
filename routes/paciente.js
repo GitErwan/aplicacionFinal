@@ -2,6 +2,8 @@ var express = require('express');
 var pacienteController = require('../controllers/pacienteController.js')
 var mdAutenticacion = require('../middlewares/autenticacion'); // Al usar esta variable verifica el token
 var app = express();
+var fileUpload = require('express-fileupload');
+app.use(fileUpload());
 
 app.get('/', pacienteController.getPacientes);
 app.get('/:id', pacienteController.getPaciente);
