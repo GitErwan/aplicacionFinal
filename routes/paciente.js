@@ -5,11 +5,11 @@ var app = express();
 var fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
-app.get('/', pacienteController.getPacientes);
-app.get('/:id', pacienteController.getPaciente);
-app.post('/', /*mdAutenticacion.verificaToken,*/ pacienteController.postPaciente);
+app.get('/', mdAutenticacion.verificaToken, pacienteController.getPacientes);
+app.get('/:id', mdAutenticacion.verificaToken, pacienteController.getPaciente);
+app.post('/', mdAutenticacion.verificaToken, pacienteController.postPaciente);
 app.put('/:id', pacienteController.putPaciente);
-app.put('/baja/:dni', pacienteController.bajaPaciente);
+app.put('/baja/:dni', mdAutenticacion.verificaToken, pacienteController.bajaPaciente);
 //app.delete('/:id', pacienteController.deletePaciente);
 
 module.exports = app;
