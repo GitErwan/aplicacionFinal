@@ -32,14 +32,12 @@ var medicoRoutes = require('./routes/medico');
 var consultaRoutes = require('./routes/consulta');
 var loginRoutes = require('./routes/login');
 var pacienteMedicoRoutes = require('./routes/pacienteMedico');
-console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
 // Conexión a la base de datos
 mongoose.connection.openUri('mongodb://mongo:27017/proyectoHospitalDB', (err, res) => {
     if (err) throw err;
 
     console.log("base de datos creada!");
 });
-console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE");
 
 // Rutas
 app.use('/paciente', pacienteRoutes);
