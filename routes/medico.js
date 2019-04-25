@@ -6,7 +6,7 @@ var medicoController = require('../controllers/medicoController.js')
 var fileUpload = require('express-fileupload');
 app.use(fileUpload());
 
-app.get('/',/* mdAutenticacion.verificaToken,*/ medicoController.getMedicos);
+app.get('/', mdAutenticacion.verificaToken, medicoController.getMedicos);
 app.get('/especialidades', mdAutenticacion.verificaToken, medicoController.getEspecialidades);
 app.post('/', /*mdAutenticacion.verificaToken, */medicoController.postMedico);
 app.put('/:id', mdAutenticacion.verificaToken, medicoController.putMedico);
