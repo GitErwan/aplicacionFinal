@@ -233,6 +233,7 @@ async function putConsultas(req, res, next){
         if(consulta.descripcion_paciente != body.descripcion_paciente) consulta.descripcion_paciente = body.descripcion_paciente
         if(consulta.diagnostico_medico != body.diagnostico_medico) consulta.diagnostico_medico = body.diagnostico_medico
         if(consulta.especialidad != body.especialidad) consulta.especialidad = body.especialidad
+        if(consulta.estado != body.estado) consulta.estado = body.estado
         
         consulta.save( ( err, consultaGuardado ) => {
             if (err){
