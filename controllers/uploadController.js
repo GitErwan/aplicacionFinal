@@ -6,23 +6,11 @@ var fs = require('fs');
  * Sube la imagen del médico o del paciente
  */
 function subirImagen(imagen, tipo){
-    //var tipo = req.params.tipo;
-    //var id = req.params.id;
-
     // Creo la carpeta uploads si no existe
     if(!fs.existsSync('uploads')){
         fs.mkdirSync('uploads');
     }
 
-    // Tipos de coleccion
-    var tiposValidos = ['medicos', 'pacientes'];
-    if( tiposValidos.indexOf( tipo ) < 0 ){
-        return res.status(400).json({
-            ok: false,
-            mensaje: "Coección no válida",
-            errors: { message: "sólo se admite medicos y pacientes"}
-        });
-    }
     var carpeta = `uploads/${tipo}`;
 
     // Si no existe el directorio lo creo
@@ -30,13 +18,8 @@ function subirImagen(imagen, tipo){
         fs.mkdirSync(carpeta);
     }
 
-    if ( !imagen ){// CREO QUE NO ES NECESARIO PORQUE SIEMPRE VIENE UNA IMAGEN
-        console.log(imagen)
-        return res.status(400).json({
-            ok: false,
-            mensaje: "Error seleccionando imagen",
-            errors: { message: "selecciona una imagen "}
-        });
+    if ( !imagen ){ // Si se manda sin imagen coge la de por defecto
+        return "imagenDefecto.png"
     }
 
     // Obtener el nombre del archivo
@@ -46,12 +29,8 @@ function subirImagen(imagen, tipo){
 
     // Extensiones válidas
     var extensionesValidas = ['png', 'jpg', 'gif', 'jpeg'];
-    if ( extensionesValidas.indexOf( extension ) <0 ){
-        return res.status(400).json({
-            ok: false,
-            mensaje: "Extensión no válida",
-            errors: { message: "Extensiones válidas : 'png', 'jpg', 'gif', 'jpeg'"}
-        });
+    if ( extensionesValidas.indexOf( extension ) <0 ){ // Si no es ninguna de las extensiones pone la de por defetco
+        return "imagenDefecto.png"
     }
 
     // Nombre archivo personalizado (id + número random + extensión)
@@ -69,14 +48,9 @@ function subirImagen(imagen, tipo){
             });
         }
     });
-
     return path
-    /*res.status(200).json({
-        ok: true,
-        mensaje : 'Imagen actualizada'
-    });*/
-
 }
+
 module.exports = {
     subirImagen
 };
