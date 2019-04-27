@@ -166,10 +166,8 @@ function putPaciente(req, res, next){
         if(paciente.telefono != body.telefono) paciente.telefono = body.telefono
         if(paciente.direccion != body.direccion) paciente.direccion = body.direccion
         if(paciente.baja != body.baja) paciente.baja = body.baja
-        if(req.files){ // si se está mandando una imagen (en el frontend comprobar si se manda la misma o no, si es la misma no mandar)
-            paciente.img = uploadController.subirImagen(req.files, 'pacientes');
-        }
-        
+        paciente.img = uploadController.subirImagen(req.files, 'pacientes');
+                
         paciente.save( ( err, pacienteGuardado ) => {
             if (err){
                 return res.status(400).json({
