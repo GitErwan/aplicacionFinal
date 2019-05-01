@@ -152,7 +152,7 @@ function putPaciente(req, res, next){
             }
         }
 
-        if(body.password==""){ // Si se envía vacía significa que no se quiere cambiar la contraseña, y si no se cifra
+        if(body.password==" "){ // Si se envía vacía significa que no se quiere cambiar la contraseña, y si no se cifra
             var pass = paciente.password;
         }else{
             var pass = bcrypt.hashSync(body.password, 10)
