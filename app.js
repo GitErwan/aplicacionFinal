@@ -20,9 +20,12 @@ next();
   * Body Parser
   */
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+// Para ver las imagenes por la url
+app.use(express.static(__dirname));
 
 /**
  * Importar rutas
