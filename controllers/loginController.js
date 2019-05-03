@@ -54,7 +54,7 @@ function logPaciente(req, res, next){
 function logMedico(req, res, next){
     var body = req.body;
 
-    Medico.findOne( {usuario: body.usuario }, (err, medicoDB)=>{
+    Medico.findOne( {usuario: body.usuario, baja:false }, (err, medicoDB)=>{
 
         if (err){
             return res.status(500).json({
